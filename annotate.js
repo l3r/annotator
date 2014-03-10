@@ -1,13 +1,20 @@
 // DOM of the tab being viewed which can only be accessed by content_scripts
 
+var c = null;
+
 console.log('annotate.js');
 
 chrome.runtime.sendMessage({type:'showPageAction'});
 
 chrome.runtime.onMessage.addListener(function() {
   console.log('recv', arguments);
-  console.log(document.body);
-  annotate(document);
+  console.log(document.body, c);
+  if (!c) {
+    c = annotate(document);
+  } else {
+    document.body.removeChild(c);
+    c = null;
+  }
 });
 
 function annotate(document) {
@@ -58,4 +65,6 @@ function annotate(document) {
     ctx.closePath();
     ctx.stroke();
   };
+
+  return canvas;
 }
